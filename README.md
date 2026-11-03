@@ -1,4 +1,4 @@
-Game Name TO BE DECIDED
+APPLES!!!
 This is a simple game made by following Hack Club's Snek tutorial.
-NOTE TO SELF: REMEMBER TO UPDATE THIS!!!
 It was written in Python using pygame.
+All assets were drawn by me using Piskel
