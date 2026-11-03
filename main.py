@@ -28,7 +28,17 @@ falling_object = pygame.image.load("imgs/Apple_icon.png").convert_alpha()
 falling_object_x = 0
 falling_object_y = 0
 falling_object_vel_x = 0
-falling_object_vel_y = 0.3
+falling_object_vel_y = 0.2
+
+#making falling special apple
+fall_special = pygame.surface.Surface((40,40))
+fall_special = pygame.image.load("imgs/Golden_apple_icon.png").convert_alpha()
+fall_special_x = 1000
+fall_special_y = 1000
+fall_special_vel_x = 0
+fall_special_vel_y = 0
+
+special_is_falling = False
 
 #making game over screen
 game_over = pygame.surface.Surface((400,400))
@@ -49,6 +59,16 @@ def collision_detection():
             (player_x + player.width) >= falling_object_x and 
             player_y <= (falling_object_y + falling_object.height + 5) and 
             (player_y + player.height) >= falling_object_y)
+def collision_detection_special():
+    return ((player_x <= (fall_special_x + int(fall_special.width))) and
+            (player_x + player.width) >= fall_special_x and 
+            player_y <= (fall_special_y + fall_special.height + 5) and 
+            (player_y + player.height) >= fall_special_y)
+
+def make_special():
+    random_number = random.randint(0, 300)
+    if random_number == 1:
+        return True
 
 while True:
     #take input
@@ -68,7 +88,7 @@ while True:
                 player_y = 400
                 falling_object_x = random.randint(0, window.width - 50)
                 falling_object_y = 0
-                falling_object_vel_y = 0.3
+                falling_object_vel_y = 0.2
                 score_text = font.render(f"Score: {score}", True, (0,0,0))
         else:
             player_vel_x = 0
@@ -82,12 +102,31 @@ while True:
         falling_object_vel_x, falling_object_vel_y = 0,0
 
         game_state = 2
-    #falling obeject randomizer
+    #falling obeject collision detector
     elif collision_detection():
         score += 1
         score_text = font.render(f"Score: {score}", True, (0,0,0))
         falling_object_y = 0
         falling_object_x = random.randint(0, window.width - 50)
+
+    #if it goes out of bounds, reset it
+    if make_special() and not special_is_falling:
+        special_is_falling = True
+        fall_special_x = random.randint(0, window.width - 50)
+        fall_special_y = 0
+        fall_special_vel_x = 0
+        fall_special_vel_y = 0.1
+        window.blit(fall_special, (fall_special_x, fall_special_y))
+    if fall_special_y >= 600:
+        special_is_falling = False
+        fall_special_x, fall_special_y = 1000,1000
+        fall_special_vel_x, fall_special_vel_y = 0,0
+    #if you touch it, get 5 points
+    elif collision_detection_special():
+        score += 5
+        score_text = font.render(f"Score: {score}", True, (0,0,0))
+        fall_special_x, fall_special_y = 1000,1000
+        fall_special_vel_x, fall_special_vel_y = 0,0
     
     #drawing everyting
     #draws window
@@ -104,6 +143,11 @@ while True:
         falling_object_y += falling_object_vel_y
         window.blit(falling_object, (falling_object_x, falling_object_y))
 
+        #randomizer for falling object
+        fall_special_x += fall_special_vel_x
+        fall_special_y += fall_special_vel_y
+        window.blit(fall_special, (fall_special_x, fall_special_y))
+            
         #draws score
         window.blit(score_text, (10, 10))
 
