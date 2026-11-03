@@ -1,9 +1,21 @@
 import pygame
 import random
+import sys
+import os
+
+def resource_path(relative_path):
+    """ Dynamically finds asset paths for both regular python runs and PyInstaller builds """
+    try:
+        # PyInstaller unpacks assets into a temporary folder named _MEIPASS at runtime
+        base_path = sys._MEIPASS
+    except Exception:
+        base_path = os.path.abspath(".")
+    return os.path.join(base_path, relative_path)
+
 
 window = pygame.display.set_mode((800,600))
 window.fill((0,0,0))
-pygame.display.set_caption("Write your caption here!")
+pygame.display.set_caption("APPLES!!!")
 
 #floor
 floor = pygame.surface.Surface((800,100))
@@ -15,7 +27,7 @@ game_state = 1
 
 #making player
 player = pygame.surface.Surface((100,100))
-player = pygame.image.load("imgs/Player_icon (2).png").convert_alpha()
+player = pygame.image.load(resource_path("imgs/Player_icon (2).png")).convert_alpha()
 player = pygame.transform.scale(player, (100,100))
 player_x = 0
 player_y = 400
@@ -24,7 +36,7 @@ player_vel_y = 0
 
 #making npc
 falling_object = pygame.surface.Surface((40,40))
-falling_object = pygame.image.load("imgs/Apple_icon.png").convert_alpha()
+falling_object = pygame.image.load(resource_path("imgs/Apple_icon.png")).convert_alpha()
 falling_object_x = 0
 falling_object_y = 0
 falling_object_vel_x = 0
@@ -32,7 +44,7 @@ falling_object_vel_y = 0.2
 
 #making falling special apple
 fall_special = pygame.surface.Surface((40,40))
-fall_special = pygame.image.load("imgs/Golden_apple_icon.png").convert_alpha()
+fall_special = pygame.image.load(resource_path("imgs/Golden_apple_icon.png")).convert_alpha()
 fall_special_x = 1000
 fall_special_y = 1000
 fall_special_vel_x = 0
@@ -42,7 +54,7 @@ special_is_falling = False
 
 #making game over screen
 game_over = pygame.surface.Surface((400,400))
-game_over = pygame.image.load("imgs/Sad_player_icon.png").convert_alpha()
+game_over = pygame.image.load(resource_path("imgs/Sad_player_icon.png")).convert_alpha()
 game_over = pygame.transform.scale(game_over, (300,300))
 
 #making score display
@@ -66,9 +78,10 @@ def collision_detection_special():
             (player_y + player.height) >= fall_special_y)
 
 def make_special():
-    random_number = random.randint(0, 300)
+    random_number = random.randint(0, 400)
     if random_number == 1:
         return True
+    
 
 while True:
     #take input
@@ -158,3 +171,4 @@ while True:
         window.blit(score_text, (10, 10))
     
     pygame.display.flip()
+    
